@@ -16,6 +16,7 @@ const App: React.FC = () => {
   const [followUpResponse, setFollowUpResponse] = useState<string | null>(null);
   const [followUpLoading, setFollowUpLoading] = useState<boolean>(false);
   const [copySuccess, setCopySuccess] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
   const getHexagram = useCallback((u: number, l: number): Hexagram => {
     const upper = TRIGRAMS[u];
@@ -39,6 +40,7 @@ const App: React.FC = () => {
     }
 
     setLoading(true);
+    setError(null);
     setResult(null);
     setFollowUpResponse(null);
 
@@ -68,9 +70,9 @@ const App: React.FC = () => {
         movingLine,
         analysis
       });
-    } catch (error) {
-      console.error(error);
-      alert("大师解析受阻，可能是天机不可泄露，请稍后再试。");
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || "大师解析受阻，请检查 API 配置或稍后再试。");
     } finally {
       setLoading(false);
     }
@@ -108,7 +110,7 @@ ${result.analysis.overallAdvice}
     try {
       const resp = await askFollowUp(result, q);
       setFollowUpResponse(resp);
-    } catch (error) {
+    } catch (err) {
       alert("解析失败，请再问一次。");
     } finally {
       setFollowUpLoading(false);
@@ -123,6 +125,14 @@ ${result.analysis.overallAdvice}
         <p className="text-stone-500 italic tracking-[0.2em] text-sm md:text-lg">至诚感神 · 专业解卦系统</p>
         <div className="h-1 w-24 md:w-32 bg-amber-900 mx-auto mt-4"></div>
       </header>
+
+      {error && (
+        <div className="w-full max-w-2xl mb-8 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-center">
+          <p className="font-bold">解析出错</p>
+          <p className="text-sm">{error}</p>
+          <button onClick={() => setError(null)} className="mt-2 text-xs underline">清除错误</button>
+        </div>
+      )}
 
       {/* Input Section */}
       {!result && (
