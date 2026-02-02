@@ -1,8 +1,9 @@
 
 import { GoogleGenAI, Type } from "@google/genai";
-import { DivinationResult, Hexagram } from "../types";
+import { DivinationResult, Hexagram } from "../types.ts";
 
-const ai = new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
+// 每次调用时创建新实例，确保获取最新的环境变量
+const getAI = () => new GoogleGenAI({ apiKey: process.env.API_KEY || "" });
 
 export async function analyzeDivination(
   question: string,
@@ -23,35 +24,35 @@ export async function analyzeDivination(
 
 请按照以下结构提供深度解析，文字需考究、古雅，且具备《高岛易断》特有的实务指导意义（特别是政治、商业、军事视角的运用）：
 
-1. 上卦（外卦）详析：不仅说明其象征（如天、地、雷等），更要分析其在《高岛易断》体系中代表的“外势”、“对方”、“未来趋势”或“社会环境”。
-2. 下卦（内卦）详析：深度解析其代表的“内因”、“自我”、“根基”或“当前心境”，以及它如何承载上卦。
-3. 卦象大象（综合解析）：详细描述上下卦相遇产生的化学反应。解析该卦的“卦德”，说明为何以此命名，并引用《高岛易断》中关于此卦象的经典论述。
-4. 彖传精解：结合用户的具体问题，用你高岛吞象特有的逻辑（如“至诚”理论）分析彖辞，指出局势的转捩点。
-5. 动爻（第${movingLine}爻）与变卦：解析该爻辞的微言大义。必须结合变卦“${changedHex.name}”的特性，说明动爻如何导致了性质的转化。
-6. 高岛式断语：给出极其明确、毫无模棱两可的断语。包括：吉凶判定、具体的行动策略、时机把握。
-7. 后续建议：基于当前卦意，提出3个用户应该进一步思考或追问的深度方向。
+1. 上卦（外卦）详析：不仅说明其象征，更要分析其在《高岛易断》体系中代表的“外势”、“对方”、“未来趋势”。
+2. 下卦（内卦）详析：深度解析其代表的“内因”、“自我”、“根基”或“当前心境”。
+3. 卦象大象（综合解析）：详细描述上下卦相遇产生的化学反应。解析该卦的“卦德”，并引用《高岛易断》中的论述。
+4. 彖传精解：结合用户具体问题，用“至诚”理论分析彖辞，指出局势的转捩点。
+5. 动爻（第${movingLine}爻）与变卦：解析该爻辞的微言大义，说明动爻如何导致了性质的转化。
+6. 高岛式断语：给出明确的断语（吉凶、策略、时机）。
+7. 后续建议：提出3个深度追问的方向。
 
 输出必须为JSON格式。
 `;
 
+  const ai = getAI();
   const response = await ai.models.generateContent({
-    model: "gemini-3-pro-preview",
+    model: "gemini-3-flash-preview", // 切换为 Flash 提升额度和速度
     contents: prompt,
     config: {
       responseMimeType: "application/json",
       responseSchema: {
         type: Type.OBJECT,
         properties: {
-          upperTrigramDetail: { type: Type.STRING, description: "上卦及其外势影响的深度解析" },
-          lowerTrigramDetail: { type: Type.STRING, description: "下卦及其内在根基的深度解析" },
-          imagery: { type: Type.STRING, description: "整体卦象、卦德及高岛经典论述" },
-          judgement: { type: Type.STRING, description: "彖辞精解与局势转捩点分析" },
-          lineInterpretation: { type: Type.STRING, description: "动爻辞、变卦关联及性质转化解析" },
-          overallAdvice: { type: Type.STRING, description: "高岛式明确断语与具体策略建议" },
+          upperTrigramDetail: { type: Type.STRING },
+          lowerTrigramDetail: { type: Type.STRING },
+          imagery: { type: Type.STRING },
+          judgement: { type: Type.STRING },
+          lineInterpretation: { type: Type.STRING },
+          overallAdvice: { type: Type.STRING },
           followUps: { 
             type: Type.ARRAY, 
-            items: { type: Type.STRING },
-            description: "后续深度探究点"
+            items: { type: Type.STRING }
           }
         },
         required: ["upperTrigramDetail", "lowerTrigramDetail", "imagery", "judgement", "lineInterpretation", "overallAdvice", "followUps"]
@@ -77,6 +78,7 @@ export async function askFollowUp(
 请给出更具针对性、不离《高岛易断》宗旨的深度解答。
 `;
 
+  const ai = getAI();
   const response = await ai.models.generateContent({
     model: "gemini-3-flash-preview",
     contents: prompt,
