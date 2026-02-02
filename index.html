@@ -16,6 +16,8 @@
         .ink-texture {
             background-image: url('https://www.transparenttextures.com/patterns/natural-paper.png');
         }
+        /* 防止页面在脚本加载前闪烁 */
+        [v-cloak] { display: none; }
     </style>
 <script type="importmap">
 {
@@ -27,8 +29,14 @@
   }
 }
 </script>
+<!-- 注入全局变量兼容性，防止在某些环境中 process 报错 -->
+<script>
+  window.process = window.process || { env: {} };
+</script>
 </head>
 <body class="ink-texture">
     <div id="root"></div>
+    <!-- 核心修复：必须引入入口脚本才能启动应用 -->
+    <script type="module" src="./index.tsx"></script>
 </body>
 </html>
