@@ -1,9 +1,9 @@
 
 import React, { useState, useCallback } from 'react';
-import { TRIGRAMS, HEXAGRAM_NAMES } from './constants';
-import { Hexagram, DivinationResult } from './types';
-import { analyzeDivination, askFollowUp } from './services/gemini';
-import { HexagramVisualizer } from './components/HexagramVisualizer';
+import { TRIGRAMS, HEXAGRAM_NAMES } from './constants.ts';
+import { Hexagram, DivinationResult } from './types.ts';
+import { analyzeDivination, askFollowUp } from './services/gemini.ts';
+import { HexagramVisualizer } from './components/HexagramVisualizer.tsx';
 
 const App: React.FC = () => {
   const [upperId, setUpperId] = useState<number>(1);
@@ -130,11 +130,10 @@ ${result.analysis.overallAdvice}
         <div className="w-full max-w-2xl mb-8 p-4 bg-red-50 border border-red-200 text-red-700 rounded-xl text-center">
           <p className="font-bold">解析出错</p>
           <p className="text-sm">{error}</p>
-          <button onClick={() => setError(null)} className="mt-2 text-xs underline">清除错误</button>
+          <button onClick={() => setError(null)} className="mt-2 text-xs underline">清除错误信息</button>
         </div>
       )}
 
-      {/* Input Section */}
       {!result && (
         <section className="w-full max-w-2xl bg-white/80 backdrop-blur-md p-6 md:p-10 border border-stone-200 rounded-3xl shadow-2xl transition-all">
           <div className="mb-8 p-4 bg-amber-50/50 rounded-xl border border-amber-100 text-amber-900 text-xs md:text-sm flex gap-3 items-center">
@@ -195,7 +194,7 @@ ${result.analysis.overallAdvice}
             <button
               type="submit"
               disabled={loading}
-              className={`w-full py-5 bg-stone-800 text-amber-50 rounded-2xl font-bold text-xl hover:bg-stone-700 transform transition-all active:scale-[0.98] flex justify-center items-center gap-3 shadow-xl hover:shadow-amber-900/10 ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
+              className={`w-full py-5 bg-stone-800 text-amber-50 rounded-2xl font-bold text-xl hover:bg-stone-700 transform transition-all active:scale-[0.98] flex justify-center items-center gap-3 shadow-xl ${loading ? 'opacity-70 cursor-not-allowed' : ''}`}
             >
               {loading ? (
                 <>
@@ -208,7 +207,6 @@ ${result.analysis.overallAdvice}
         </section>
       )}
 
-      {/* Result Section */}
       {result && (
         <section className="w-full animate-fade-in-up space-y-8 pb-24">
           <div className="flex justify-between items-center px-2">
@@ -227,7 +225,6 @@ ${result.analysis.overallAdvice}
           </div>
 
           <div className="bg-white/95 border border-stone-200 p-6 md:p-14 rounded-[2.5rem] shadow-2xl space-y-12">
-            {/* Hexagram Display Area */}
             <div className="flex flex-col lg:flex-row justify-around items-center gap-10 border-b border-stone-100 pb-12">
               <HexagramVisualizer label="本卦 (体)" hexagram={result.originalHex} movingLine={result.movingLine} />
               <div className="flex flex-col items-center">
@@ -238,7 +235,6 @@ ${result.analysis.overallAdvice}
               <HexagramVisualizer label="变卦 (用)" hexagram={result.changedHex} />
             </div>
 
-            {/* Trigram Details Area */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
               <div className="bg-stone-50 p-6 md:p-8 rounded-3xl border-l-8 border-stone-800 shadow-sm">
                 <h4 className="flex items-center gap-3 text-xl font-bold text-stone-800 mb-4">
@@ -260,7 +256,6 @@ ${result.analysis.overallAdvice}
               </div>
             </div>
 
-            {/* Analysis Grid */}
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
               <div className="space-y-12">
                 <section>
@@ -306,7 +301,6 @@ ${result.analysis.overallAdvice}
               </div>
             </div>
 
-            {/* Suggestions */}
             <div className="pt-10 border-t border-stone-100">
               <h4 className="text-xl font-bold text-stone-800 mb-6 flex items-center gap-3">
                 <span className="p-2 bg-amber-100 rounded-lg text-amber-900">🕯️</span>
@@ -325,7 +319,6 @@ ${result.analysis.overallAdvice}
               </div>
             </div>
 
-            {/* Follow-up Output */}
             {(followUpLoading || followUpResponse) && (
               <div className="mt-12 p-8 md:p-12 bg-stone-900 text-stone-100 rounded-[3rem] shadow-2xl border border-amber-500/20 relative">
                 <h5 className="font-bold text-amber-400 mb-6 italic text-2xl flex items-center gap-3">
@@ -349,7 +342,6 @@ ${result.analysis.overallAdvice}
         </section>
       )}
 
-      {/* Footer */}
       <footer className="mt-auto py-12 text-stone-400 text-sm flex flex-col items-center gap-4 w-full">
         <div className="h-px w-full max-w-xs bg-gradient-to-r from-transparent via-stone-200 to-transparent"></div>
         <div className="text-center">
